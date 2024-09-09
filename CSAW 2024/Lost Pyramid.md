@@ -1,21 +1,21 @@
 ## tổng quan recon
-![image](/img/1.png)
+![image](../CSAW%202024/img/1.png)
 
 dùng thử rồi white box nào
 
-![image](/img/2.png)
+![image](../CSAW%202024/img/2.png)
 
 click vào `ENTER` nó sẽ tạo cho mình 1 cookie
-![image](/img/3.png)
+![image](../CSAW%202024/img/3.png)
 
 có 2 endpoint cần focus trong chall này: `/kings_lair` và `/scarab_room`
 truy cập vào endpoint `/kings_lair` thì báo `Internal 
 Server Error`
-![image](/img/4.png)
+![image](../CSAW%202024/img/4.png)
 
 
 còn truy cập vào `/scarab_room` sau khi nhập tên thì
-![image](/img/5.png)
+![image](../CSAW%202024/img/5.png)
 đây là code của endpoint này
 ```
 @app.route('/scarab_room', methods=['GET', 'POST'])
@@ -94,34 +94,34 @@ def scarab_room():
 được rồi, ngay trong phần des có đề cập đến JWT, có lẽ chúng ta cần bypass cái này, view source nào
 
 flag nằm trong template `kings_lair.html`, và được gọi tới ở endpoint `/king_lair`
-![image](/img/6.png)
+![image](../CSAW%202024/img/6.png)
 
 
 tại đây chúng ta cần bypass điều kiện ở dòng 132
-![image](/img/7.png)
+![image](../CSAW%202024/img/7.png)
 
 trong đó `KINGDAYS` được lấy từ `os.getenv`
-![image](/img/8.png)
+![image](../CSAW%202024/img/8.png)
 
 đồng thời private_key và public_key được load nằm trong `/app`
-![image](/img/9.png)
+![image](../CSAW%202024/img/9.png)
 
 okey, vậy là chúng ta cần bypass cái jwt kia để nó render temp nhả về flag
 
 Đầu tiên chúng ta cần xem cookie được tạo ra thế nào
-![image](/img/10.png)
+![image](../CSAW%202024/img/10.png)
 
 nó truyền payload dạng json vào rồi sử dụng `jwt.encode()` để kí với PRIVATE_KEY cùng thuật toán `EdDSA`. Có vẻ không có lỗi gì ở đây
 
 tiếp đến là xem nó verify cookie
-![image](/img/11.png)
+![image](../CSAW%202024/img/11.png)
 
 tại dòng 131 việc sử dụng `jwt.decode()` xảy ra một vấn đề, đó là không đồng bộ việc sử dụng thuật toán xác thực, như mình đã phân tích ở trên thì thuật toán dùng kí là `EdDSA` còn xác thực lại dùng `jwt.algorithms.get_default_algorithms()`
 
 Bằng chứng rõ ràng cho ae tin nó sai nằm ở google =)), mình tham khảo tại [đây](https://www.vicarius.io/vsociety/posts/risky-algorithms-algorithm-confusion-in-pyjwt-cve-2022-29217)
 
 `CVE-2022-29217`
-![image](/img/12.png)
+![image](../CSAW%202024/img/12.png)
 
 mình đã có 1 bài phân tích về `algorithm confusion in JWT`, mọi người có thể đọc thêm tại [github](https://github.com/soong1002/portswigger/blob/main/JWT/jwt_confusion_alg.md) của mình
 
@@ -129,13 +129,13 @@ mình đã có 1 bài phân tích về `algorithm confusion in JWT`, mọi ngư�
 Như vậy chúng ta cần lấy được `PUBLIC_KEY` và `KINGSDAY`, tận dụng `algorithm confusion` để bypass 
 
 quay trở lại với endpoint `/scarab_room`
-![image](/img/13.png)
+![image](../CSAW%202024/img/13.png)
 
 `name` không hề được check trước khi đưa vào template, rất có thể nó sẽ bị SSTI
 
 thành công lấy được `KINGSDAY` và `PUBLIC_KEY` qua SSTI
-![image](/img/14.png)
-![image](/img/15.png)
+![image](../CSAW%202024/img/14.png)
+![image](../CSAW%202024/img/15.png)
 
 code exploit
 ```
@@ -157,7 +157,7 @@ exploit = jwt.encode({
 print(exploit)
 ```
 để run được code này chúng ta cần tạo venv như trong `requirements.txt`
-![image](/img/16.png)
+![image](../CSAW%202024/img/16.png)
 
 chạy tập lệnh sau:
 ```
@@ -169,11 +169,11 @@ pip3 install PyJWT==2.3.0 cryptography==43.0.0
 
 sau khi cài đặt venv cần thiết ta có thể tạo jwt với HMAC SHA256
 
-![image](/img/17.png)
+![image](../CSAW%202024/img/17.png)
 
 và đây là kết quả mong chờ
 
-![image](/img/18.png)
+![image](../CSAW%202024/img/18.png)
 
 
 
