@@ -7,9 +7,9 @@ Lâu lắm rồi mình mới quay lại chơi CTF sau 1 thời gian đi thực t
 
 Vô thôi, 1 bài CTF của BlueHens2024
 
-![image](https://hackmd.io/_uploads/rkead5yGJx.png)
+![image](../img/1.png)
 
-![image](https://hackmd.io/_uploads/rylyFc1Gkl.png)
+![image](../img/2.png)
 
 truy cập vào thì chỉ có thế này, mình thử fuzz bằng `ffuf` nhưng không có gì đặc biệt lắm ngoài cái thư mục `./git`
 
@@ -23,14 +23,14 @@ tất nhiên là méo gì làm khó được vì cái gì cũng có lịch sử 
 
 dùng thêm command `bash bash extractor.sh <path_tới_file_.git_đã_dump_về> <dir lưu trữ>`
 
-![image](https://hackmd.io/_uploads/HkLWqc1Gkx.png)
+![image](../img/3.png)
 
 bú thôi
 
 có file index.html lộ password được encrypt bằng MD5, crack là xong
-![image](https://hackmd.io/_uploads/S1BXqckM1l.png)
+![image](../img/4.png)
 
-![image](https://hackmd.io/_uploads/HJPVqcJMkx.png)
+![image](../img/5.png)
 
 FLAG: `udctf{00ph_g1t_b4s3d_l34ks?}`
 
